@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type Repository interface {
 	Save(task Task) (Task, error)
 	FindAll() ([]Task, error)
+	SaveCompleteTask(completedTask CompletedTask) (CompletedTask, error)
 }
 
 type repository struct {
@@ -26,9 +27,18 @@ func (r *repository) Save(task Task) (Task, error) {
 
 func (r *repository) FindAll() ([]Task, error) {
 	var tasks []Task
-	err := r.db.Find(&tasks).Error
+	err := r.db.Preload("CompletedTasks").Find(&tasks).Error
 	if err != nil {
 		return tasks, err
 	}
 	return tasks, nil
+}
+
+func (r *repository) SaveCompleteTask(completedTask CompletedTask) (CompletedTask, error) {
+	err := r.db.Create(&completedTask).Error
+	if err != nil {
+		return completedTask, err
+	}
+
+	return completedTask, nil
 }

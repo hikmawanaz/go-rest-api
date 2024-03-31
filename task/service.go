@@ -3,6 +3,7 @@ package task
 type Service interface {
 	CreateTask(input Task) (Task, error)
 	GetAllTasks() ([]Task, error)
+	CompleteSingleTask(input CompleteSingleTaskInput) (CompletedTask, error)
 }
 
 type service struct {
@@ -29,4 +30,17 @@ func (s *service) GetAllTasks() ([]Task, error) {
 		return tasks, err
 	}
 	return tasks, nil
+}
+
+func (s *service) CompleteSingleTask(input CompleteSingleTaskInput) (CompletedTask, error) {
+	inputTask := CompletedTask{}
+
+	inputTask.TaskID = input.TaskId
+	inputTask.CompletedAt = input.CompletedAt
+
+	completedTask, err := s.repository.SaveCompleteTask(inputTask)
+	if err != nil {
+		return completedTask, err
+	}
+	return completedTask, nil
 }

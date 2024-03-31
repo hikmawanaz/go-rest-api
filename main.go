@@ -42,5 +42,7 @@ func main() {
 	api.POST("/user/update/:id", helper.AuthMiddleware(authService, userService), userHandler.UpdateUser)
 
 	api.POST("/tasks", helper.AuthMiddleware(authService, userService), taskHandler.CreateTask)
+	api.GET("/tasks", helper.AuthMiddleware(authService, userService), taskHandler.FindAllTasks)
+	api.POST("/tasks/complete-single-task", helper.AuthMiddleware(authService, userService), taskHandler.CompleteSingleTask)
 	router.Run(":8081")
 }
